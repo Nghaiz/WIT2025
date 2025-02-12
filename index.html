@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Requests</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            width: 60%;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #050505;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .friend-box {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            scroll-behavior: smooth;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+
+        .friend-box::-webkit-scrollbar {
+            display: none;
+        }
+
+        .request-item {
+            background: white;
+            width: 180px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            padding-bottom: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .info {
+            padding: 10px;
+        }
+
+        .name {
+            font-weight: 600;
+            color: #050505;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .mutual-friends {
+            color: #65676B;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 5px;
+        }
+
+        .btn {
+            padding: 8px 0;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .confirm-btn {
+            background: #1B74E4;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #78acf5;
+        }
+
+        .delete-btn {
+            background: #E4E6EB;
+            color: #050505;
+        }
+
+        .delete-btn:hover {
+            background: #afb0b4;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .prev {
+            left: -20px;
+        }
+
+        .next {
+            right: -20px;
+        }
+
+        .see-all {
+            color: #1B74E4;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 5px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        .see-all:hover {
+            background: #f0f2f5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">Friend Requests</div>
+        <div class="slider-wrapper">
+            <button class="nav-btn prev">&#9665;</button>
+            <div class="friend-box">
+            <!-- random -->
+            </div>
+            <button class="nav-btn next">&#9655;</button>
+        </div>
+
+        <div class="see-all">See all</div>
+    </div>
+
+    <div class="modal">No more friend requests!</div>
+    <div class="overlay"></div>
+
+    <script>
+        const friendBox = document.querySelector('.friend-box');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+
+        nextBtn.addEventListener('click', () => {
+            friendBox.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            friendBox.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+
+        const friends = [
+            { name: 'Nguyễn Trường', img: 'https://randomuser.me/api/portraits/men/1.jpg', mutual: 19 },
+            { name: 'Nguyễn Gia Huy', img: 'https://randomuser.me/api/portraits/men/2.jpg', mutual: 12 },
+            { name: 'Hồ Hà', img: 'https://randomuser.me/api/portraits/men/3.jpg', mutual: 6 },
+            { name: 'Đông Chí', img: 'https://randomuser.me/api/portraits/men/4.jpg', mutual: 9 },
+            { name: 'Lê Hữu Phước', img: 'https://randomuser.me/api/portraits/men/5.jpg', mutual: 8 },
+            { name: 'Trần Văn Bảo', img: 'https://randomuser.me/api/portraits/men/6.jpg', mutual: 14 },
+            { name: 'Lương Tuấn Anh', img: 'https://randomuser.me/api/portraits/men/7.jpg', mutual: 20 },
+            { name: 'Nguyễn Duy Nghĩa', img: 'https://randomuser.me/api/portraits/men/8.jpg', mutual: 57 },
+            { name: 'Phạm Văn Tư', img: 'https://randomuser.me/api/portraits/men/9.jpg', mutual: 7 }
+        ];
+
+        friends.forEach(friend => {
+            const item = document.createElement('div');
+            item.classList.add('request-item');
+            item.innerHTML = `
+                <img src="${friend.img}" class="profile-img">
+                <div class="info">
+                    <div class="name">${friend.name}</div>
+                    <div class="mutual-friends">${friend.mutual} mutual friends</div>
+                    <div class="button-group">
+                        <button class="btn confirm-btn">Confirm</button>
+                        <button class="btn delete-btn">Delete</button>
+                    </div>
+                </div>
+            `;
+            friendBox.appendChild(item);
+        });
+
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const requestItem = this.closest('.request-item');
+                requestItem.remove();
+                checkRequests();
+            });
+        });
+
+        document.querySelector('.see-all').addEventListener('click', function() {
+            const remainingRequests = document.querySelectorAll('.request-item').length;
+            if (remainingRequests === 0) {
+                document.querySelector('.modal').style.display = 'block';
+                document.querySelector('.overlay').style.display = 'block';
+
+                setTimeout(() => {
+                    document.querySelector('.modal').style.display = 'none';
+                    document.querySelector('.overlay').style.display = 'none';
+                }, 1500);
+            }
+        });
+
+        function checkRequests() {
+            const remaining = document.querySelectorAll('.request-item').length;
+            if (remaining === 0) {
+                document.querySelector('.see-all').textContent = 'No requests';
+            }
+        }
+    </script>
+</body>
+</html>
